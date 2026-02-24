@@ -1,31 +1,45 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./styles/styles.css" />
-    <title>Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./styles/styles.css" />
+  <title>Reboot01 Profile</title>
+  <link rel="icon" type="image/ico" href="assets/imgs/favicon.ico">
 </head>
 <body>
-    <main class="auth-card">
-        <h1>Reboot01 Profile</h1>
+  <header id="topbar" class="topbar hidden">
+    <h1>Reboot01 Student Profile</h1>
+    <button id="logoutBtn" type="button">Logout</button>
+  </header>
 
-        <form id="loginForm">
-        <label>
-            Username or Email
-            <input id="login" type="text" autocomplete="username" required />
-        </label>
+  <!-- Login view -->
+  <main id="loginView" class="auth-card">
+    <h1>Reboot01 Profile</h1>
 
-        <label>
-            Password
-            <input id="password" type="password" autocomplete="current-password" required />
-        </label>
+    <form id="loginForm">
+      <label>
+        Username or Email
+        <input id="login" type="text" autocomplete="username" required />
+      </label>
 
-        <button type="submit">Sign in</button>
-        <p id="error" class="error" hidden></p>
-        </form>
-    </main>
+      <label>
+        Password
+        <input id="password" type="password" autocomplete="current-password" required />
+      </label>
 
-    <script type="module" src="./scripts/login.js"></script>
+      <button type="submit">Sign in</button>
+      <p id="error" class="error" hidden></p>
+    </form>
+  </main>
+
+  <!-- Dashboard view -->
+  <main id="dashboardView" class="container hidden">
+    <div id="app" class="container">
+      <p>Loading...</p>
+    </div>
+  </main>
+
+  <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>

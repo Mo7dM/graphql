@@ -1,14 +1,12 @@
 import { getToken, logout } from "./auth.js";
 import { gql } from "./graphql.js";
-import { roundToDecimal, renderProjects,attachXpHover } from "./utils.js";
+import { roundToDecimal, attachXpHover, mountSkillsChart } from "./utils.js";
 
 const app = document.getElementById("app");
-
-if (!getToken()) window.location.href = "./index.html";
-document.getElementById("logoutBtn").addEventListener("click", logout);
+let __xpResizeBound = false;
 
 const profileQuery = `
-    query Dashboard($limit: Int!, $xpLimit: Int!) {
+    query Dashboard($xpLimit: Int!) {
     user {
         id
         login
@@ -42,15 +40,12 @@ const profileQuery = `
         createdAt
     }
 
-    projectProgress: progress(
-        where: { object: { type: { _eq: "project" } } }
-        order_by: { updatedAt: desc }
-        limit: $limit
+    skills: transaction_aggregate(
+      distinct_on: type
+      where: { type: { _like: "skill%" } }
+      order_by: { type: asc, amount: desc }
     ) {
-        grade
-        updatedAt
-        path
-        object { id name type }
+      nodes { type amount }
     }
     }
 `;
@@ -242,16 +237,16 @@ function drawXpChart(canvas, points) {
   canvas._xpHit = { points, X, Y, padL, padR, padT, padB, W, H, PW, PH, maxV };
 }
 
-async function loadProfile() {
+export async function loadProfile() {
   app.innerHTML = `<p>Loading…</p>`;
 
   try {
-    const data = await gql(profileQuery, { limit: 50, xpLimit: 80 });
+    const data = await gql(profileQuery, { xpLimit: 80 });
 
     const me = data.user[0];
     const totalXp = data.transaction_aggregate.aggregate.sum.amount || 0;
     const level = data.currentLevel[0]?.amount || 0;
-    const projects = data.projectProgress || [];
+    const skills = data.skills?.nodes || [];
 
     const xpPoints = buildXpSeries(data.xpTx);
 
@@ -270,8 +265,7 @@ async function loadProfile() {
       </section>
 
       <section class="card">
-        <h2>Projects (Pass/Fail)</h2>
-        ${renderProjects(projects)}
+        <div id="skillsMount"></div>
       </section>
     `;
 
@@ -279,13 +273,15 @@ async function loadProfile() {
     drawXpChart(canvas, xpPoints);
     attachXpHover(canvas);
 
-    window.addEventListener("resize", () => {
-      drawXpChart(canvas, xpPoints);
-    });
+    mountSkillsChart(skills, document.getElementById("skillsMount"));
 
-  } catch (err) {
+    if (!__xpResizeBound) {
+      __xpResizeBound = true;
+      window.addEventListener("resize", () => {
+        drawXpChart(canvas, xpPoints);
+      });
+    }
+} catch (err) {
     app.innerHTML = `<p class="error">${err.message}</p>`;
   }
 }
-
-loadProfile();

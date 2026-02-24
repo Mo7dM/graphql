@@ -3,8 +3,8 @@ import { signin,getToken } from "./auth.js"
 const form = document.getElementById("loginForm")
 const errorP = document.getElementById("error")
 
-if (getToken()){
-    window.location.href="/profile.html"
+if (getToken()) {
+  window.dispatchEvent(new CustomEvent("auth:login"));
 }
 
 form.addEventListener("submit",async(e)=>{
@@ -16,7 +16,7 @@ form.addEventListener("submit",async(e)=>{
 
     try{
         await signin(login,password);
-        window.location.href="/profile.html";
+        window.dispatchEvent(new CustomEvent("auth:login"));
     } catch (err){
         errorP.textContent = err.message  || "Login failed";
         errorP.hidden=false;

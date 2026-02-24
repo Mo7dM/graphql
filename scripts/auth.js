@@ -14,7 +14,7 @@ export function clearToken(){
 
 export function logout(){
     clearToken();
-    window.location.href="/index.html";
+    window.dispatchEvent(new CustomEvent("auth:logout"));
 }
 
 export async function signin(username,password){
