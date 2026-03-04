@@ -1,4 +1,3 @@
-import { getToken, logout } from "./auth.js";
 import { gql } from "./graphql.js";
 import { roundToDecimal, attachXpHover, mountSkillsChart } from "./utils.js";
 
@@ -237,7 +236,6 @@ export async function loadProfile() {
     const data = await gql(profileQuery, { xpLimit: 300 });
 
     const me = data.user[0];
-    const totalXp = data.transaction_aggregate.aggregate.sum.amount || 0;
     const level = data.currentLevel[0]?.amount || 0;
     const skills = data.skills?.nodes || [];
 
