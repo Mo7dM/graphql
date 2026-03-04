@@ -8,12 +8,9 @@ let __xpResizeBound = false;
 const profileQuery = `
     query Dashboard($xpLimit: Int!) {
     user {
-        id
         login
         email
         auditRatio
-        campus
-        createdAt
         totalUp
         totalDown
     }
@@ -50,8 +47,6 @@ const profileQuery = `
     }
 `;
 
-// Build cumulative XP points
-// Build cumulative XP points from transactions (sorted by createdAt)
 function buildXpSeries(xpTx) {
   if (!Array.isArray(xpTx)) return [];
 
