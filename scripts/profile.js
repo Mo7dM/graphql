@@ -29,7 +29,7 @@ const profileQuery = `
     }
 
     xpTx: transaction(
-        where: { type: { _eq: "xp" }, amount: { _gt: 0 } }
+        where: { type: { _eq: "xp" }, amount: { _gt: 0 },path: { _like: "%module%" } }
         order_by: { createdAt: asc }
         limit: $xpLimit
     ) {
@@ -227,8 +227,6 @@ function drawXpChart(canvas, points) {
     ctx.fill();
   }
 
-  // ---- Hover interactivity ----
-  // Store hit points in canvas object so handler can reuse
   canvas._xpHit = { points, X, Y, padL, padR, padT, padB, W, H, PW, PH, maxV };
 }
 
@@ -236,7 +234,7 @@ export async function loadProfile() {
   app.innerHTML = `<p>Loading…</p>`;
 
   try {
-    const data = await gql(profileQuery, { xpLimit: 80 });
+    const data = await gql(profileQuery, { xpLimit: 300 });
 
     const me = data.user[0];
     const totalXp = data.transaction_aggregate.aggregate.sum.amount || 0;
